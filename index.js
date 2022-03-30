@@ -107,11 +107,13 @@ app.post("/users/:userId/contact", async (req, res) => {
 });
 
 // TODO Contacts: name, email, description, category
-app.get("/contacts", (req, res) => {
+app.get("/contacts", async (req, res) => {
   // 1 - Vérifier le token qui est dans le cookie
   let data;
+  let contacts;
   try {
     data = jwt.verify(req.cookies.jwt, secret);
+    contacts = await Contact.find();
   } catch (err) {
     return res.status(401).json({
       message: "Your token is not valid",
@@ -122,6 +124,7 @@ app.get("/contacts", (req, res) => {
   res.json({
     message: "Your token is valid",
     data,
+    contacts,
   });
 });
 
