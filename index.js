@@ -96,7 +96,7 @@ app.get("/users/:userId", async (req, res) => {
   res.json(user);
 });
 
-// TODO Add contact by userId: name, email, description, category
+// TODO Add a contact by userId: name, email, description, category
 app.post("/users/:userId/contact", async (req, res) => {
   const contact = await Contact.create(req.body);
   await User.findByIdAndUpdate(req.params.userId, {
@@ -111,9 +111,11 @@ app.get("/contacts", async (req, res) => {
   // 1 - Vérifier le token qui est dans le cookie
   let data;
   let contacts;
+  let nb;
   try {
     data = jwt.verify(req.cookies.jwt, secret);
     contacts = await Contact.find();
+    nb = await Contact.count();
   } catch (err) {
     return res.status(401).json({
       message: "Your token is not valid",
@@ -122,13 +124,51 @@ app.get("/contacts", async (req, res) => {
 
   // L'utilisateur est authentifié/autorisé
   res.json({
-    message: "Your token is valid",
+    message: `Your token is valid, total contacts are ${nb}`,
     data,
     contacts,
   });
 });
 
-// Start server
+// TODO Modifier un contact by contactId: with PUT
+app.patch("/contacts/:contactId", async (req, res) => {
+  await Contact.findByIdAndUpdate(req.params.contactId, {
+    description: req.body.description,
+  });
+
+  res.json({
+    message: `Contact is modified`,
+  });
+});
+
+// TODO Delete a contact
+app.delete("/delete/:contactId", async (req, res) => {
+  let contacts;
+  let contactId = req.params.contactId;
+  
+  try {
+    contactId = await Contact.remove({
+      _id: contactId,
+    });
+    contacts = await Contact.find();
+  } catch (err) {
+      return res.status(401).json({
+        message: "Error",
+      });
+  }
+  
+  res.json({
+    message: `Contact is deleted`,
+    contacts
+  });
+});
+
+// TODO Message error for all pages
+app.get("*", (_req, res) => {
+  res.status(404).send("Not found");
+});
+
+// TODO Start server
 app.listen(8000, () => {
   console.log("Listening in the port 8000");
 });
