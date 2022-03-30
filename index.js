@@ -84,7 +84,7 @@ app.post("/login", async (req, res) => {
   // 4 - On met le token dans un cookie
   res.cookie("jwt", token, { httpOnly: true, secure: false });
 
-  // 5 - Envoyer le cookie au client
+  // 5 - Envoyer le cookie au name
   res.json({
     message: "You are signed in",
   });
@@ -98,15 +98,32 @@ app.get("/users/:userId", async (req, res) => {
 
 // TODO Add a contact by userId: name, email, description, category
 app.post("/users/:userId/contact", async (req, res) => {
-  const contact = await Contact.create(req.body);
-  await User.findByIdAndUpdate(req.params.userId, {
-    $push: { contact: contact._id },
-  });
-
-  res.status(201).send("Contact is added");
+  let data;
+  let contact;
+  let contactRelated;
+  try {
+    data = jwt.verify(req.cookies.jwt, secret);
+    contactRelated = await User.findById(req.params.userId);
+    contact = await Contact.create({
+      userId: contactRelated._id,
+      name: req.body.name,
+      email: req.body.email,
+      description: req.body.description,
+      category: req.body.category,
+    });
+    res.json({
+      message: `Infos of ${req.body.name} are added`,
+      data,
+      contact,
+    });
+  } catch (err) {
+    return res.status(401).json({
+      message: "Your token is not valid",
+    });
+  }
 });
 
-// TODO Contacts: name, email, description, category
+// TODO Get the list of all contacts
 app.get("/contacts", async (req, res) => {
   // 1 - Vérifier le token qui est dans le cookie
   let data;
@@ -131,7 +148,7 @@ app.get("/contacts", async (req, res) => {
 });
 
 // TODO Modifier un contact by contactId: with PUT
-app.patch("/contacts/:contactId", async (req, res) => {
+app.put("/contacts/:contactId", async (req, res) => {
   await Contact.findByIdAndUpdate(req.params.contactId, {
     description: req.body.description,
   });
@@ -143,24 +160,42 @@ app.patch("/contacts/:contactId", async (req, res) => {
 
 // TODO Delete a contact
 app.delete("/delete/:contactId", async (req, res) => {
-  let contacts;
+  let contact;
   let contactId = req.params.contactId;
-  
+
   try {
     contactId = await Contact.remove({
       _id: contactId,
     });
-    contacts = await Contact.find();
+    contact = await Contact.find();
   } catch (err) {
-      return res.status(401).json({
-        message: "Error",
-      });
+    return res.status(401).json({
+      message: "Error",
+    });
   }
-  
+
   res.json({
     message: `Contact is deleted`,
-    contacts
+    contact,
   });
+});
+
+// TODO Filter
+app.get("/contacts/filter", async (req, res) => {
+  let filteredContact;
+  try {
+    data = jwt.verify(req.cookies.jwt, secret);
+    filteredContact = await Contact.find(req.query);
+
+    res.json({
+      message: "User is filtered",
+      filteredContact,
+    });
+  } catch (err) {
+    return res.status(401).json({
+      message: "Error",
+    });
+  }
 });
 
 // TODO Message error for all pages

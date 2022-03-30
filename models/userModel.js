@@ -11,7 +11,7 @@ const UserSchema = mongoose.Schema({
     required: true,
     
     },
-    contacts: [{ type: mongoose.Types.ObjectId, ref: "Contact" }],
+  contacts: [{ type: mongoose.Types.ObjectId, ref: "Contact" }],
 });
 
 const User = mongoose.model("User", UserSchema);
