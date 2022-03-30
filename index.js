@@ -7,8 +7,7 @@ const app = express();
 
 // Models
 const User = require("./models/userModel");
-const Description = require("./models/descriptionModel");
-const Category = require("./models/categoryModel");
+const Contact = require("./models/contactModel");
 
 // http://www.unit-conversion.info/texttools/random-string-generator/ : 30 characters
 const secret = "5uzhJWUDUDHpTCE5Wbl3uv5Svdo3cT";
@@ -29,24 +28,22 @@ mongoose
     console.log("Connected to MongoDB");
   });
 
-// Routes
-// Homepage
+// !  Routes
+// TODO Homepage
 app.get("/", (_req, res) => {
   res.send("CRM page");
 });
 
-// Register: email, password
+// TODO Register: email, password
 app.post("/register", async (req, res) => {
-
   // 1 - Hasher le mot de passe
   const hashedPassword = await bcrypt.hash(req.body.password, 12);
 
   // 2 - Créer un utilisateur
   try {
     await User.create({
-      name: req.body.name,
       email: req.body.email,
-      password: hashedPassword
+      password: hashedPassword,
     });
   } catch (err) {
     return res.status(400).json({
@@ -59,7 +56,7 @@ app.post("/register", async (req, res) => {
   });
 });
 
-// Login: email + password
+// TODO Login: email + password
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -89,11 +86,27 @@ app.post("/login", async (req, res) => {
 
   // 5 - Envoyer le cookie au client
   res.json({
-    message: "Here is your cookie",
+    message: "You are signed in",
   });
 });
 
-// Contact: name, email
+// TODO Find info of an user by userId
+app.get("/users/:userId", async (req, res) => {
+  const user = await User.findById(req.params.userId);
+  res.json(user);
+});
+
+// TODO Add contact by userId: name, email, description, category
+app.post("/users/:userId/contact", async (req, res) => {
+  const contact = await Contact.create(req.body);
+  await User.findByIdAndUpdate(req.params.userId, {
+    $push: { contact: contact._id },
+  });
+
+  res.status(201).send("Contact is added");
+});
+
+// TODO Contacts: name, email, description, category
 app.get("/contacts", (req, res) => {
   // 1 - Vérifier le token qui est dans le cookie
   let data;
