@@ -151,6 +151,7 @@ app.get("/contacts", async (req, res) => {
 app.put("/contacts/:contactId", async (req, res) => {
   await Contact.findByIdAndUpdate(req.params.contactId, {
     description: req.body.description,
+    category: req.body.category,
   });
 
   res.json({
@@ -199,19 +200,18 @@ app.get("/contacts/filter", async (req, res) => {
 });
 
 // TODO Logout
-app.get('/logout',(req,res)=>{
-	try {
-		data = jwt.verify(req.cookies.jwt, secret);
-		res.clearCookie("jwt").status(200).json({
-			message: "You have successfully logged out!",
-		  });
-		  // res.redirect("/");
-	} catch (err) {
-		return res.status(401).json({
-			message: "Your token is not valid",
-		});
-	}
-
+app.get("/logout", (req, res) => {
+  try {
+    data = jwt.verify(req.cookies.jwt, secret);
+    res.clearCookie("jwt").status(200).json({
+      message: "You have successfully logged out!",
+    });
+    // res.redirect("/");
+  } catch (err) {
+    return res.status(401).json({
+      message: "Your token is not valid",
+    });
+  }
 });
 
 

@@ -9,7 +9,7 @@ const ContactSchema = mongoose.Schema({
     required: true,
   },
   description: String,
-  category: Number,
+  category: String,
 });
 
 const Contact = mongoose.model("Contact", ContactSchema);
