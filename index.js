@@ -110,6 +110,7 @@ app.post("/users/:userId/contact", async (req, res) => {
       email: req.body.email,
       description: req.body.description,
       category: req.body.category,
+      isAdmin: req.body.isAdmin,
     });
     res.json({
       message: `Infos of ${req.body.name} are added`,
@@ -216,28 +217,27 @@ app.get("/logout", (req, res) => {
 });
 
 // TODO Admin Delete a contact by contactId
-app.delete("/isAdmin/delete/:contactId", async (req, res) => {
-  let contact;
-  let contactId = req.params.contactId;
-  let admin = req.params.isAdmin;
+app.delete("/isAdmin/delete/:userId", async (req, res) => {
+  if (req.params.isAdmin = true) {
+    try {
+      const user = await User.findById(req.params.userId);
+      await Contact.remove({ userId: user._id });
+      await User.findByIdAndDelete(req.params.userId);
+      res.status(200).json({
+        message: "User has been deleted",
+      });
+    } catch (err) {
+        console.log(err);
+        res.status(400).json({
+          message: "Error",
+        });
+      }
+    } else {
+      res.status(400).json({
+        message: "You are not admin, you can not delete an user",
+      });
+    }
 
-  try {
-    contactId = await Contact.remove({
-      _id: contactId,
-      isAdmin: false,
-    });
-    contact = await Contact.find();
-  } catch (err) {
-    return res.status(401).json({
-      message: "Error",
-    });
-  }
-
-  res.json({
-    message: "Admin deleted a contact",
-    contact,
-    admin,
-  });
 });
 
 // TODO Message error for all pages
