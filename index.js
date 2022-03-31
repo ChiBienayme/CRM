@@ -152,7 +152,7 @@ app.put("/contacts/:contactId", async (req, res) => {
   await Contact.findByIdAndUpdate(req.params.contactId, {
     description: req.body.description,
     category: req.body.category,
-    isAdmin: req.body.isAdmin
+    isAdmin: req.body.isAdmin,
   });
 
   res.json({
@@ -215,7 +215,30 @@ app.get("/logout", (req, res) => {
   }
 });
 
+// TODO Admin Delete a contact by contactId
+app.delete("/isAdmin/delete/:contactId", async (req, res) => {
+  let contact;
+  let contactId = req.params.contactId;
+  let admin = req.params.isAdmin;
 
+  try {
+    contactId = await Contact.remove({
+      _id: contactId,
+      isAdmin: false,
+    });
+    contact = await Contact.find();
+  } catch (err) {
+    return res.status(401).json({
+      message: "Error",
+    });
+  }
+
+  res.json({
+    message: "Admin deleted a contact",
+    contact,
+    admin,
+  });
+});
 
 // TODO Message error for all pages
 app.get("*", (_req, res) => {
