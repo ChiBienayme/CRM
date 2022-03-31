@@ -198,6 +198,23 @@ app.get("/contacts/filter", async (req, res) => {
   }
 });
 
+// TODO Logout
+app.get('/logout',(req,res)=>{
+	try {
+		data = jwt.verify(req.cookies.jwt, secret);
+		res.clearCookie("jwt").status(200).json({
+			message: "You have successfully logged out!",
+		  });
+		  // res.redirect("/");
+	} catch (err) {
+		return res.status(401).json({
+			message: "Your token is not valid",
+		});
+	}
+
+});
+
+
 // TODO Message error for all pages
 app.get("*", (_req, res) => {
   res.status(404).send("Not found");
