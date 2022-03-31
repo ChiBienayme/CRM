@@ -10,6 +10,7 @@ const ContactSchema = mongoose.Schema({
   },
   description: String,
   category: String,
+  isAdmin: Boolean
 });
 
 const Contact = mongoose.model("Contact", ContactSchema);

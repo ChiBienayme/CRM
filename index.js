@@ -152,6 +152,7 @@ app.put("/contacts/:contactId", async (req, res) => {
   await Contact.findByIdAndUpdate(req.params.contactId, {
     description: req.body.description,
     category: req.body.category,
+    isAdmin: req.body.isAdmin
   });
 
   res.json({
@@ -213,6 +214,7 @@ app.get("/logout", (req, res) => {
     });
   }
 });
+
 
 
 // TODO Message error for all pages
