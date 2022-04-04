@@ -246,6 +246,6 @@ app.get("*", (_req, res) => {
 });
 
 // TODO Start server
-app.listen(8000, () => {
+app.listen(process.env.PORT, () => {
   console.log("Listening in the port 8000");
 });
