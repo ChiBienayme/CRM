@@ -32,9 +32,10 @@ mongoose
 
 // !  Routes
 // TODO Homepage
-app.get("/", (_req, res) => {
-  res.send("CRM page");
-});
+app.get ("/", (req, res) => {
+  req.setHeader("Content-Type" , "text");
+  req.send("<h1>Welcome</h1>");
+})
 
 // TODO Register: email, password
 app.post("/register", async (req, res) => {
