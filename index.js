@@ -35,9 +35,9 @@ mongoose
 
 // !  Routes
 // TODO Homepage
-app.get("/", (req, res) => {
-  req.setHeader("Content-Type", "text/html");
-  req.send("<h1>Welcome</h1>");
+app.get("/", (_req, res) => {
+  res.setHeader("Content-Type", "text/html");
+  res.send("<h1>Welcome</h1>");
 });
 
 // TODO Register: email, password
