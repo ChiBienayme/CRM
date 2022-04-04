@@ -17,13 +17,13 @@ app.use(express.json());
 app.use(cookieParser());
 
 // dotenv
-require("dotenv").config();
+// require("dotenv").config();
 
-const { PORT, MONGODB_URI, API_KEY } = process.env;
+// const { PORT, MONGODB_URI, API_KEY } = process.env;
 
 // Connexion à MongoDB
 mongoose
-  .connect(MONGODB_URI, {
+  .connect("mongodb+srv://chibienayme:UCPC3bbpkpuoROqt@cluster0.pg9q2.mongodb.net/CRM?retryWrites=true&w=majority", {
     useNewUrlParser: true,
   })
   .then(() => {
