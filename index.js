@@ -16,14 +16,16 @@ const secret = "5uzhJWUDUDHpTCE5Wbl3uv5Svdo3cT";
 app.use(express.json());
 app.use(cookieParser());
 
+// dotenv
+require("dotenv").config();
+
+const { PORT, MONGODB_URI, API_KEY } = process.env;
+
 // Connexion à MongoDB
 mongoose
-  .connect(
-    "mongodb+srv://chibienayme:UCPC3bbpkpuoROqt@cluster0.pg9q2.mongodb.net/CRM?retryWrites=true&w=majority",
-    {
-      useNewUrlParser: true,
-    }
-  )
+  .connect(MONGODB_URI, {
+    useNewUrlParser: true,
+  })
   .then(() => {
     console.log("Connected to MongoDB");
   });
@@ -218,7 +220,7 @@ app.get("/logout", (req, res) => {
 
 // TODO Admin Delete a contact by contactId
 app.delete("/isAdmin/delete/:userId", async (req, res) => {
-  if (req.params.isAdmin = true) {
+  if ((req.params.isAdmin = true)) {
     try {
       const user = await User.findById(req.params.userId);
       await Contact.remove({ userId: user._id });
@@ -227,17 +229,16 @@ app.delete("/isAdmin/delete/:userId", async (req, res) => {
         message: "User has been deleted",
       });
     } catch (err) {
-        console.log(err);
-        res.status(400).json({
-          message: "Error",
-        });
-      }
-    } else {
+      console.log(err);
       res.status(400).json({
-        message: "You are not admin, you can not delete an user",
+        message: "Error",
       });
     }
-
+  } else {
+    res.status(400).json({
+      message: "You are not admin, you can not delete an user",
+    });
+  }
 });
 
 // TODO Message error for all pages
@@ -246,6 +247,6 @@ app.get("*", (_req, res) => {
 });
 
 // TODO Start server
-app.listen(process.env.PORT, () => {
+app.listen(PORT, () => {
   console.log("Listening in the port 8000");
 });
