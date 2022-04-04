@@ -17,13 +17,13 @@ app.use(express.json());
 app.use(cookieParser());
 
 // dotenv
-// require("dotenv").config();
+require("dotenv").config();
 
-// const { PORT, MONGODB_URI, API_KEY } = process.env;
+const { PORT, MONGODB_URI, API_KEY } = process.env;
 
 // Connexion à MongoDB
 mongoose
-  .connect("mongodb+srv://chibienayme:UCPC3bbpkpuoROqt@cluster0.pg9q2.mongodb.net/CRM?retryWrites=true&w=majority", {
+  .connect(MONGODB_URI, {
     useNewUrlParser: true,
   })
   .then(() => {
@@ -32,10 +32,10 @@ mongoose
 
 // !  Routes
 // TODO Homepage
-app.get ("/", (req, res) => {
-  req.setHeader("Content-Type" , "text");
+app.get("/", (req, res) => {
+  req.setHeader("Content-Type", "text");
   req.send("<h1>Welcome</h1>");
-})
+});
 
 // TODO Register: email, password
 app.post("/register", async (req, res) => {
