@@ -17,15 +17,18 @@ app.use(express.json());
 app.use(cookieParser());
 
 // dotenv
-require("dotenv").config();
+// require("dotenv").config();
 
-const { PORT, MONGODB_URI, API_KEY } = process.env;
+// const { PORT, MONGODB_URI, API_KEY } = process.env;
 
 // Connexion à MongoDB
 mongoose
-  .connect(MONGODB_URI, {
-    useNewUrlParser: true,
-  })
+  .connect(
+    "mongodb+srv://chibienayme:UCPC3bbpkpuoROqt@cluster0.pg9q2.mongodb.net/CRM?retryWrites=true&w=majority",
+    {
+      useNewUrlParser: true,
+    }
+  )
   .then(() => {
     console.log("Connected to MongoDB");
   });
@@ -33,7 +36,7 @@ mongoose
 // !  Routes
 // TODO Homepage
 app.get("/", (req, res) => {
-  req.setHeader("Content-Type", "text");
+  req.setHeader("Content-Type", "text/html");
   req.send("<h1>Welcome</h1>");
 });
 
@@ -248,6 +251,6 @@ app.get("*", (_req, res) => {
 });
 
 // TODO Start server
-app.listen(PORT, () => {
-  console.log("Listening in the port 8000");
+app.listen(process.env.PORT, () => {
+  console.log("Listening");
 });
